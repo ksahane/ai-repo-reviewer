@@ -1,0 +1,27 @@
+%% Architecture diagram for the repository reviewer application
+%% Render with Mermaid (flowchart TD layout)
+
+flowchart TD
+    style UI fill:#f9f,stroke:#333,stroke-width:1px
+    style API fill:#bbf,stroke:#333,stroke-width:1px
+    style Reviewer fill:#bfb,stroke:#333,stroke-width:1px
+    style Git fill:#ffe,stroke:#333,stroke-width:1px
+    style RAG fill:#eef,stroke:#333,stroke-width:1px
+    style LLM fill:#fed,stroke:#333,stroke-width:1px
+
+    UI[Browser UI \n(form & results)]
+    API[Next.js API Route<br>/api/analyze]
+    Reviewer[runRepositoryReview<br>(review pipeline)]
+    Git[Git Clone & file reader]
+    RAG[RAG retrieval<br>best-practices corpus]
+    LLM[OpenRouter / LLM models]
+
+    UI -->|POST repo URL| API
+    API -->|invoke| Reviewer
+    Reviewer -->|clone repo| Git
+    Reviewer -->|gather readme/files| Git
+    Reviewer -->|retrieve guidance| RAG
+    Reviewer -->|analysis/reflection| LLM
+    LLM -->|text output| Reviewer
+    Reviewer -->|structured result| API
+    API -->|JSON response| UI
