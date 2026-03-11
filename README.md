@@ -31,6 +31,60 @@ The final API response includes:
 - `reflection`: a second-pass critique or refinement
 - `retrievedChunks`: the RAG snippets selected from the local best-practices file
 
+## Requirements
+
+- Node.js 20+
+- OpenRouter API key
+
+## Setup
+
+The easiest way to run the agent is via the built-in web UI, but the core logic is also usable from the command line (see `src/main.js`). The following steps start the dev server:
+
+1. Create `.env.local` (or `.env`) in project root:
+
+```bash
+OPENROUTER_API_KEY=your_key_here
+# Optional overrides:
+# OPENROUTER_ANALYSIS_MODEL=meta-llama/llama-3-8b-instruct
+# OPENROUTER_EMBEDDING_MODEL=text-embedding-ada-002
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Run dev server:
+
+```bash
+npm run dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000)
+
+## Technologies Used
+
+- Next.js for the web UI and API route
+- Node.js 20+ for the runtime
+- `simple-git` for cloning public GitHub repositories
+- `langchain` for text splitting during retrieval
+- `compute-cosine-similarity` for vector similarity scoring
+- OpenRouter via the OpenAI-compatible client for embeddings and analysis
+- Analysis model: `meta-llama/llama-3-8b-instruct`
+- Embedding model: `text-embedding-ada-002`
+
+## Where Each Technology Is Used
+
+- `Next.js`: UI page and API endpoint in [`app/page.js`](/Users/home/AI/ai-repo-reviewer/app/page.js) and [`app/api/analyze/route.js`](/Users/home/AI/ai-repo-reviewer/app/api/analyze/route.js)
+- `simple-git`: clones the target GitHub repository in [`lib/reviewer.js`](/Users/home/AI/ai-repo-reviewer/lib/reviewer.js)
+- `langchain`: splits `data/best_practices.txt` into chunks with `RecursiveCharacterTextSplitter` in [`lib/reviewer.js`](/Users/home/AI/ai-repo-reviewer/lib/reviewer.js)
+- `compute-cosine-similarity`: ranks chunk relevance against the repository README in [`lib/reviewer.js`](/Users/home/AI/ai-repo-reviewer/lib/reviewer.js)
+- OpenRouter client (`openai` package): creates embeddings and chat completions in [`lib/openrouter.js`](/Users/home/AI/ai-repo-reviewer/lib/openrouter.js) and [`lib/reviewer.js`](/Users/home/AI/ai-repo-reviewer/lib/reviewer.js)
+- `meta-llama/llama-3-8b-instruct`: used for repository analysis and reflection in [`lib/reviewer.js`](/Users/home/AI/ai-repo-reviewer/lib/reviewer.js)
+- `text-embedding-ada-002`: used to embed the README and best-practice chunks in [`lib/reviewer.js`](/Users/home/AI/ai-repo-reviewer/lib/reviewer.js)
+- Chunking method: not an LLM; it uses `RecursiveCharacterTextSplitter` from `langchain`
+
 ## Architecture
 
 Detailed ASCII flow with fully vertical layout (each box has a one-line description):
@@ -75,9 +129,9 @@ Detailed ASCII flow with fully vertical layout (each box has a one-line descript
 This project uses OpenRouter through the OpenAI-compatible client in [`lib/openrouter.js`](/Users/home/Downloads/ai-agentic-reviewer-openrouter/lib/openrouter.js).
 
 - Analysis model:
-  `meta-llama/llama-3-8b-instruct`
+  [`meta-llama/llama-3-8b-instruct`](https://openrouter.ai/models/meta-llama/llama-3-8b-instruct)
 - Embedding model:
-  `text-embedding-ada-002`
+  [`text-embedding-ada-002`](https://platform.openai.com/docs/models/text-embedding-ada-002)
 
 These are the current defaults in code and can be overridden with environment variables:
 
@@ -129,38 +183,6 @@ _Method:_ `retrieveContext(readme, 3)`
 _Method:_ `buildPrompt(...)`
 
 In practice, this means the reviewer does not retrieve text by exact keyword match. It retrieves the best-practice passages that are most semantically similar to the repository README, then uses those passages as context for the analysis and reflection steps.
-
-## Requirements
-
-- Node.js 20+
-- OpenRouter API key
-
-## Setup
-
-The easiest way to run the agent is via the built-in web UI, but the core logic is also usable from the command line (see `src/main.js`). The following steps start the dev server:
-
-1. Create `.env.local` (or `.env`) in project root:
-
-```bash
-OPENROUTER_API_KEY=your_key_here
-# Optional overrides:
-# OPENROUTER_ANALYSIS_MODEL=meta-llama/llama-3-8b-instruct
-# OPENROUTER_EMBEDDING_MODEL=text-embedding-ada-002
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Run dev server:
-
-```bash
-npm run dev
-```
-
-4. Open [http://localhost:3000](http://localhost:3000)
 
 ## API
 
