@@ -12,7 +12,7 @@ Command‑line Node.js utility that analyzes a GitHub repository URL using an Op
 
 ## What this project does
 
-**Technologies & libraries used:** Node.js 18+, Next.js for the UI/server, `simple-git` for cloning, `compute-cosine-similarity` for vector comparison, `langchain` for text splitting, and the OpenAI-compatible OpenRouter client for model calls.
+**Technologies & libraries used:** Node.js 20+, Next.js for the UI/server, `simple-git` for cloning, `compute-cosine-similarity` for vector comparison, `langchain` for text splitting, and the OpenAI-compatible OpenRouter client for model calls.
 
 ## What this project does
 
@@ -93,7 +93,7 @@ Model usage in the pipeline:
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 20+
 - OpenRouter API key
 
 ## Setup
