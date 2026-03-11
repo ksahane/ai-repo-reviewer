@@ -91,6 +91,45 @@ Model usage in the pipeline:
 - The embedding model is used for RAG retrieval:
   it embeds the repository README and each chunk from `data/best_practices.txt`, then ranks chunks by cosine similarity.
 
+## How Semantic Retrieval Works
+
+This project uses a simple semantic retrieval method inside [`lib/reviewer.js`](/Users/home/AI/ai-repo-reviewer/lib/reviewer.js):
+
+**Step 1. Load best-practices corpus**  
+_Method:_ `readBestPractices()`
+
+↓
+
+**Step 2. Split corpus into chunks**  
+_Method:_ `retrieveContext()` + `RecursiveCharacterTextSplitter`
+
+↓
+
+**Step 3. Generate embeddings**  
+_Method:_ `embed()`
+
+↓
+
+**Step 4. Create vectors**  
+_Method:_ `openrouterClient.embeddings.create(...)`
+
+↓
+
+**Step 5. Compare with repository README**  
+_Method:_ `cosineSimilarity(...)`
+
+↓
+
+**Step 6. Select top 3 matches**  
+_Method:_ `retrieveContext(readme, 3)`
+
+↓
+
+**Step 7. Build final analysis prompt**  
+_Method:_ `buildPrompt(...)`
+
+In practice, this means the reviewer does not retrieve text by exact keyword match. It retrieves the best-practice passages that are most semantically similar to the repository README, then uses those passages as context for the analysis and reflection steps.
+
 ## Requirements
 
 - Node.js 20+
